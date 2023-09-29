@@ -1,10 +1,11 @@
 use std::path::PathBuf;
 use std::env;
-use clap::{arg, Command};
+use clap::{arg, Command, Error};
 use sled;
 mod prompt;
 mod data_store;
 mod template;
+mod openai;
 
 fn cli() -> Command {
     Command::new("prompt")
@@ -17,6 +18,11 @@ fn cli() -> Command {
                 .about("Add a prompt")
                 .arg(arg!(<NAME> "the name of the prompt"))
                 .arg(arg!(<PROMPT> "the prompt template"))
+        )
+        .subcommand(
+            Command::new("once")
+                .about("Send a once off prompt")
+                .arg(arg!(<PROMPT> "the prompt"))
         )
 
 }
@@ -36,6 +42,9 @@ fn main() {
             );
             data_store::store_prompt(&db, &new_prompt);
             println!("Added prompt \"{}\" with template \"{}\" with {} parameters", new_prompt.name, new_prompt.template, new_prompt.number_of_parameters);
+        }
+        Some(("once", sub_matches)) => {
+            println!("farts, {}", openai::send_to_chatgpt(sub_matches.get_one::<String>("PROMPT").expect("required").to_string()))
         }
         _ => unreachable!(),
     }
