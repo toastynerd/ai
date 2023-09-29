@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 use clap::{arg, Command};
 mod prompt;
+mod data_store;
 
 fn cli() -> Command {
     Command::new("prompt")

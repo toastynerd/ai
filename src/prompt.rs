@@ -2,13 +2,13 @@ use serde::{Serialize, Deserialize};
 use serde_json;
 
 #[derive(Serialize, Deserialize)]
-struct Prompt {
-    name: String,
-    template: String,
+pub struct Prompt {
+    pub name: String,
+    pub template: String,
     number_of_parameters: usize,
 }
 
-fn create_prompt(name: String, template: String) -> Prompt {
+pub fn create_prompt(name: String, template: String) -> Prompt {
     let num_params = template.matches(|c| c == '{').count();
     Prompt {
         name: name,
@@ -17,11 +17,11 @@ fn create_prompt(name: String, template: String) -> Prompt {
     }
 }
 
-fn serialize_prompt(prompt: &Prompt) -> String {
+pub fn serialize_prompt(prompt: &Prompt) -> String {
     serde_json::to_string(prompt).unwrap()
 }
 
-fn deserialize_prompt(prompt: &str) -> Prompt {
+pub fn deserialize_prompt(prompt: &str) -> Prompt {
     serde_json::from_str(prompt).unwrap()
 }
 
