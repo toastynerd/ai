@@ -1,10 +1,10 @@
 use sled;
 
-fn store_prompt(db: &sled::Db, prompt: &crate::prompt::Prompt) {
+pub fn store_prompt(db: &sled::Db, prompt: &crate::prompt::Prompt) {
     db.insert(prompt.name.to_string(), crate::prompt::serialize_prompt(prompt).as_bytes()).unwrap();
 }
 
-fn get_prompt(db: &sled::Db, name: &str) -> crate::prompt::Prompt {
+pub fn get_prompt(db: &sled::Db, name: &str) -> crate::prompt::Prompt {
     let prompt = db.get(name).unwrap().unwrap();
     crate::prompt::deserialize_prompt(std::str::from_utf8(&prompt).unwrap())
 }

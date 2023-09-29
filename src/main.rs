@@ -1,5 +1,7 @@
 use std::path::PathBuf;
+use std::env;
 use clap::{arg, Command};
+use sled;
 mod prompt;
 mod data_store;
 
@@ -19,13 +21,20 @@ fn cli() -> Command {
 }
 
 fn main() {
+    if env::var("PROMPT_DB_NAME").is_err() {
+        env::set_var("PROMPT_DB_NAME", "db/prompt_db");
+    }
+
+    let db = sled::open(env::var("PROMPT_DB_NAME").unwrap_or_default()).unwrap();
     let matches = cli().get_matches();
     match matches.subcommand() {
         Some(("add", sub_matches)) => {
-            let name = sub_matches.get_one::<String>("NAME").expect("required");
-            let prompt = sub_matches.get_one::<String>("PROMPT").expect("required");
-            let num_params = prompt.matches(|c| c == '[').count();
-            println!("Added prompt \"{}\" with template \"{}\" with {num_params} parameters", name, prompt);
+            let new_prompt = prompt::create_prompt(
+                sub_matches.get_one::<String>("NAME").expect("required").to_string(),
+                sub_matches.get_one::<String>("PROMPT").expect("required").to_string(),
+            );
+            data_store::store_prompt(&db, &new_prompt);
+            println!("Added prompt \"{}\" with template \"{}\" with {} parameters", new_prompt.name, new_prompt.template, new_prompt.number_of_parameters);
         }
         _ => unreachable!(),
     }

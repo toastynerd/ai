@@ -5,7 +5,7 @@ use serde_json;
 pub struct Prompt {
     pub name: String,
     pub template: String,
-    number_of_parameters: usize,
+    pub number_of_parameters: usize,
 }
 
 pub fn create_prompt(name: String, template: String) -> Prompt {
