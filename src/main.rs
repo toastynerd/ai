@@ -4,6 +4,7 @@ use clap::{arg, Command};
 use sled;
 mod prompt;
 mod data_store;
+mod template;
 
 fn cli() -> Command {
     Command::new("prompt")
